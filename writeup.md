@@ -37,13 +37,15 @@ Since I am not very good at playing video games, I figured the data I would gene
 In this section I will explain how I enhanced the provided data set and prepared the training set. 
 The dataset provided includes images from 3 camera angles (Center, Right and Left), with 8036 images for each camera for a total of 24,108 images and steering angles. Each image is 160x320 in 3 color channels.  Below I show examples of these view points:
 
-![alt text][image1][image2][image3]
+![alt text][image1]
+![alt text][image2]
+![alt text][image3]
 
 
 
 Looking at the distribution of the steering angles (as shown below) it can be seen that majority of the data points are from instances where the steering angle (from point of view of the central camera) is 0. Having such non-uniform distribution of steering angles can cause a bias in the way the network learns from the data. 
 
-fig disibution of central camera
+
 ![alt text][image4]
 
 
@@ -53,23 +55,26 @@ The value of this correction factor is +0.1 and -0.1 for let and right cameras r
 I assume that the width of the car is ~ 2m. So the distance between any of the side cameras to the central camera is ~1m. If the steering angle is taking effect is about 10m in front of the car, the correction for the side cameras wih small angle approximation would be: $\alpha = \tan(\alpha) = \frac{1}{10}=0.1$. I use this correction factor to correct the central steering angle for both of the side cameras.
 
 The plot below shows the distribution of steering angles after side cameras' data is included. Now it can be seen that a large fraction of data has steering angles equal to = [0, -0.1, +0.1]. 
+
 ![alt text][image5]
+
 After this stage, I remove the peskiness of this distribution by discarding a large fraction of data with these particular steering angle values. At this stage I have a total of 12,333 images from all three cameras, which is still about half of the orifinal dataset. The figure below shows the resulting distribution.
+
 ![alt text][image6]
 
---- fig with three peaks and then the one after peakiness  is removed
+
 
 At this stage, in order to increase the size of training set and provide more general dataset to the network, I augment the dataset by flipping each image horizontally (with negative of the original steering angle) and adding them to the original training set. By taking this step I double the number of images in the training set (now at 24666), which proves to be helpful in how the network learns to generalise.
 The figures below show an example of the original and flipped image side by side.
 
 ![alt text][image7]
 ![alt text][image8]
- --add fig here
+
 
 The resulting steering angle distribution is shown here: 
 
 ![alt text][image9]
---- add the final distribution
+
 
 which can be seen to be more symmetric and uniform compared to the original distribution.
 As the final step I exaggerate the steering angles by 20% to encourage the network to made stronger decisions at turns. 
