@@ -92,7 +92,7 @@ The graph below shows the summary of the network architecture:
 
 
 
-## Summary:
+## ... and finally:
 To test the performace of the model, I use the final model weights to drive the car in autonomous mode along the track. The drive is successful and the car never leaves the drivable section of the road. 
 
 
