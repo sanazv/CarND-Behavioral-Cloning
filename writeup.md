@@ -1,122 +1,94 @@
-#**Behavioral Cloning** 
-
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
-**Behavioral Cloning Project**
-
-The goals / steps of this project are the following:
-* Use the simulator to collect data of good driving behavior
-* Build, a convolution neural network in Keras that predicts steering angles from images
-* Train and validate the model with a training and validation set
-* Test that the model successfully drives around track one without leaving the road
-* Summarize the results with a written report
+Files included:
+For this submission I am including the following files as per project rubric requirements:
+* model.py -- python script which reads and pre-processes data and creates and trains the model.
+* drive.py -- the script provided by Udacity that drives the car - I have changed the speed parameter to generate two video files.
+* model.h5 -- weights of the trained network
+* video.mp4 -- a video recording of my vehicle driving autonomously for a little over one lap (until second visit of the cobblestone bridge) at speed 9mph
+* video_fast.mp4 -- a video recording of my vehicle driving autonomously for a little over one lap (until second visit of the cobblestone bridge) at speed higher speed of 20 mph
 
 [//]: # (Image References)
-[image1]: ./plots/original_steering_angles.png "Steering Angles"
-![alt text][image1]
+[image1]: ./plots/left_view.png "Left"
+[image2]: ./plots/center_view.png "Center"
+[image3]: ./plots/right_view.png "Right"
 
-## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+[image4]: ./plots/original_steering_angles.png "Steering Angles"
 
----
-###Files Submitted & Code Quality
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+[image5]: ./plots/all_steering_angles_post_correction.png "From three cameras"
 
-My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+[image6]: ./plots/all_steering_angles_peakiness_removed.png "Reduce dominant angles"
 
-####2. Submission includes functional code
-Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
-```sh
-python drive.py model.h5
-```
 
-####3. Submission code is usable and readable
+[image7]: ./plots/before_flip.png "Before"
+[image8]: ./plots/after_flip.png "After"
+[image9]: ./plots/final_angle_dist.png "Final Distribution"
+[image10]: ./plots/nn_arch.png "Architecture"
+![alt text][image1][image2][image3]
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+## Introduction: 
+In this project the goal was to design and train a network network to successfully drive a car around the simulated tracks without ever touching any of the drivable segments of the road.
+In this document I will explain how I went about pre-processing the dataset, setting up the architecture and training the model. The result of the autonomous drive is provided in two video files.
+I generated two videos with the same model weights. The first one with the default driving speed of 9 mph (in drive.py) and the second one with increased speed of 20mph. In both cases the autonomous car drives the track successfully without touching any of the side lines at any point throughout the track. I kept the videos a bit longer than one lap (stopped at second time passing the cobblestone bridge) to make sure one full lap is included.
+I use a GeForce GTX 1060 6GB GPU for this project and did not need to use a generator. Also I have used Keras version 2.0.3 for this project.
 
-###Model Architecture and Training Strategy
 
-####1. An appropriate model architecture has been employed
+## Data Pre-Processing:
+Since I am not very good at playing video games, I figured the data I would generate to train the network might not set a very good example for the network. I have asked friends to help me and drive the car on the track. However I also decided to invest in augmenting the provided data set as much as possible to achieve the goal of a successful drive. 
+In this section I will explain how I enhanced the provided data set and prepared the training set. 
+The dataset provided includes images from 3 camera angles (Center, Right and Left), with 8036 images for each camera for a total of 24,108 images and steering angles. Each image is 160x320 in 3 color channels.  Below I show examples of these view points:
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+![alt text][image1][image2][image3]
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
 
-####2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+Looking at the distribution of the steering angles (as shown below) it can be seen that majority of the data points are from instances where the steering angle (from point of view of the central camera) is 0. Having such non-uniform distribution of steering angles can cause a bias in the way the network learns from the data. 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
-
-####3. Model parameter tuning
-
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
-
-####4. Appropriate training data
-
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-
-For details about how I created the training data, see the next section. 
-
-###Model Architecture and Training Strategy
-
-####1. Solution Design Approach
-
-The overall strategy for deriving a model architecture was to ...
-
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
-
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
-
-####2. Final Model Architecture
-
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
-
-####3. Creation of the Training Set & Training Process
-
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
+fig disibution of central camera
 ![alt text][image4]
+
+
+In order to avoid this bias I will remove a fraction of data (angles and their corresponding images) where the steering angle is 0 to have a more uniform distribution of various examples in the training set. I choose to keep 10% of all the dominant steering angles as well as all the non dominant steering angles.
+However doing this would reduce the number of training samples which is not ideal. In order to counter balance this, I include the data from left and right cameras. The provided steering angle file only contains steering angle values from point of view of the central camera. To mimic the same for the side cameras I add a correction factor to the steering angles when side camera images are taken in. 
+The value of this correction factor is +0.1 and -0.1 for let and right cameras respectively. 
+I assume that the width of the car is ~ 2m. So the distance between any of the side cameras to the central camera is ~1m. If the steering angle is taking effect is about 10m in front of the car, the correction for the side cameras wih small angle approximation would be: $\alpha = \tan(\alpha) = \frac{1}{10}=0.1$. I use this correction factor to correct the central steering angle for both of the side cameras.
+
+The plot below shows the distribution of steering angles after side cameras' data is included. Now it can be seen that a large fraction of data has steering angles equal to = [0, -0.1, +0.1]. 
 ![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
+After this stage, I remove the peskiness of this distribution by discarding a large fraction of data with these particular steering angle values. At this stage I have a total of 12,333 images from all three cameras, which is still about half of the orifinal dataset. The figure below shows the resulting distribution.
 ![alt text][image6]
+
+--- fig with three peaks and then the one after peakiness  is removed
+
+At this stage, in order to increase the size of training set and provide more general dataset to the network, I augment the dataset by flipping each image horizontally (with negative of the original steering angle) and adding them to the original training set. By taking this step I double the number of images in the training set (now at 24666), which proves to be helpful in how the network learns to generalise.
+The figures below show an example of the original and flipped image side by side.
+
 ![alt text][image7]
+![alt text][image8]
+ --add fig here
 
-Etc ....
+The resulting steering angle distribution is shown here: 
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+![alt text][image9]
+--- add the final distribution
+
+which can be seen to be more symmetric and uniform compared to the original distribution.
+As the final step I exaggerate the steering angles by 20% to encourage the network to made stronger decisions at turns. 
+With all the steps taken above I ensure that the network has a balanced and well representative training data to learn from.
 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+## Model Architecture and Training Strategy:
+As for the model I initially experimented with custom architectures and added layer after later to see how the car would perform. At the end, I decided to follow the architecture described in this paper [End to End Learning for Self-Driving Cars](https://arxiv.org/abs/1604.07316). At first I normalise the pixel values to 1 and then remove the mean from all pixels. I then crop each image such that the top 50 (sky etc) and bottom 25 (hood of the car) pixels are removed. The resulting images are now 85x320 rather than 160x320. The architecture used in the Nvidia paper has 5 back to back convolution layers, before flatting and going through fully connected dense layers. The first 3 convolutional layers have kernel size of 5x5 with stride of 2 and the last 2 convolutional layers have kernel size of 3x3 with stride of 1. I have added a dropout later with 50% dropout at the end of convolution layers before flattening to reduce over fitting. At each convolution layer I use the ELU (Exponential Linear Unit) to introduce non-linearities and avoid diminishing gradient as well as added speed benefit over ReLU activation layers.
+the data is split to training and validation set (70%-30%) and I set shuffling to be true, so the frames will be fed to the network in random order and not in the order of drive, which enables the network to generalise better whenever faced with a new image.
+I used a Adam optimiser with learning rate (0.0001) after trying the default value of ?? and not getting as nice results. 
+Also using batch size of 64 and number of epochs 10. At first I used larger number of epochs but even though the training loss would decrease, the validation loss was plateauing suggesting that with more epochs the network starts to overfit. So I stop the number of epoch to 10, so that I have steady decrease of validation loss and start to plateau.
+The graph below shows the summary of the network architecture: 
+ 
+![alt text][image10]
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+
+
+## Summary:
+
+Success- can be seen from the video
+
+
