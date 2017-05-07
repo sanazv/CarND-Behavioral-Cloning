@@ -23,7 +23,7 @@ For this submission I am including the following files as per project rubric req
 [image8]: ./plots/after_flip.png "After"
 [image9]: ./plots/final_angle_dist.png "Final Distribution"
 [image10]: ./plots/nn_arch.png "Architecture"
-![alt text][image1][image2][image3]
+
 
 ## Introduction: 
 In this project the goal was to design and train a network network to successfully drive a car around the simulated tracks without ever touching any of the drivable segments of the road.
